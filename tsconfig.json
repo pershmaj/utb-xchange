@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "experimentalDecorators": true,
+        "downlevelIteration": true,
         "jsx": "react",
         "module": "commonjs",
         "moduleResolution": "node",

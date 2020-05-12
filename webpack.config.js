@@ -1,5 +1,4 @@
-'use strict'
-
+// jshint esversion: 6
 const webpack = require('webpack');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const path = require('path');
@@ -17,7 +16,7 @@ module.exports = {
 	},
 
 	output: {
-		path: path.resolve(__dirname, 'build'),
+		path: path.resolve(__dirname, 'public'),
 		filename: '[name].bundle.js'
 	},
 

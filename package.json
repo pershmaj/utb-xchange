@@ -1,4 +1,8 @@
 {
+  "name": "utb-xchange",
+  "version": "1.0.0",
+  "description": "better version of xchange.utb.cz",
+  "main": "./src/app.ts",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --progress --colors --watch"
@@ -30,16 +34,17 @@
     "babel-preset-stage-0": "^6.16.0",
     "css-loader": "^0.26.1",
     "extract-text-webpack-plugin": "^3.*",
-    "sass-loader": "latest",
+    "sass-loader": "^7.3.1",
     "style-loader": "^0.13.1",
     "ts-loader": "^2.3.3",
-    "typescript": "^2.6.1",
+    "typescript": "^3.9.2",
     "webpack": "3.*",
     "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
     "bluebird": "^3.4.7",
     "eventemitter3": "^2.0.3",
+    "firebase": "^7.14.3",
     "lodash": "^4.17.4",
     "node-sass": "^4.5.3",
     "prop-types": "^15.6.0",
@@ -50,7 +55,10 @@
     "redux-actions": "2.0.3",
     "redux-promise-middleware": "4.3.0",
     "redux-thunk": "^2.2.0",
+    "rxjs": "^6.5.5",
     "superagent": "^3.4.1",
     "superagent-bluebird-promise": "^4.1.0"
-  }
+  },
+  "author": "Dmitrii Averin",
+  "license": "MIT"
 }
