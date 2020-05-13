@@ -18,17 +18,24 @@
     <link rel="stylesheet" href="./styles/app.css">
   </head>
   <body>
-    <div id="app" class="image-container">
-      <div class="row">
-        <div class="col-2">
-          <ul id="countries" class="list-group">
-
-          </ul>
+    <div id="app" class="container d-none">
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-2 d-none">
+          <ul id="countries" class="list-group"></ul>
         </div>
-        <div id="universitiesNode" class="col-8"></div>
+        <div id="universitiesNode" class="col-12 col-lg-8"></div>
+        <div class="col-12 col-lg-2 d-none d-lg-flex">
+          <ul id="spec" class="list-group"></ul>
+        </div>
       </div>
     </div>
-    
+
+    <div id="spinner" class="vh-100 justify-content-center align-items-center" style="display: flex;">
+      <div class="spinner-grow spinner-grow-lg text-danger" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+
 
     <script src="./vendors.bundle.js"></script>
     <script src="./app.bundle.js"></script>

@@ -1,5 +1,29 @@
-@import url("./layout.scss");
+.card {
+    width: 100%;
+}
 
-#app {
-    color: #ccc;
+@media (min-width: 575px) { 
+    .card-columns {
+        column-count: 1;
+    }
+}
+@media (min-width: 767px) {
+    .card-columns {
+        column-count: 2;
+    }
+    .card {
+        width: 100%;
+    }
+}
+
+@media (min-width: 991px) {
+    .card-columns {
+        column-count: 2;
+    }
+}
+
+@media (min-width: 1300px) {
+    .card-columns {
+        column-count: 3;
+    }
 }

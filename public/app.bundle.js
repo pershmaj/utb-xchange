@@ -80,17 +80,24 @@ var createDom_1 = __webpack_require__(350);
 // import { Observable } from 'rxjs';
 var app = firebase.initializeApp(firebaseConfig_1.firebaseConfig);
 var db = app.database();
+var Filter_class_1 = __webpack_require__(398);
 function init() {
     return __awaiter(this, void 0, void 0, function () {
-        var data, uni, countries;
+        var data, uni, countries, spec;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, db.ref('/university').once('value')];
                 case 1:
                     data = (_a.sent()).val();
                     uni = Object.values(data);
+                    Filter_class_1.default.items = uni;
                     countries = __spread(new Set(uni.map(function (item) { return item.country; })));
-                    createDom_1.createCountyList(countries);
+                    spec = __spread(new Set(uni.map(function (item) { return item.detail.speciality; })
+                        .reduce(function (acc, val) { return acc.concat(val); })));
+                    createDom_1.createUniversityGroup(Filter_class_1.default.filter());
+                    createDom_1.createList(countries, Filter_class_1.default, 'countries', 'countries');
+                    createDom_1.createList(spec, Filter_class_1.default, 'spec', 'spec');
+                    createDom_1.toggleLoading();
                     return [2 /*return*/];
             }
         });
@@ -135,20 +142,32 @@ exports.firebaseConfig = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCountyList = void 0;
+exports.createList = exports.createUniversityGroup = exports.toggleLoading = void 0;
 var universitiesNode = document.getElementById('universitiesNode');
 //TODO: FIX any
 function createNode(tag, options) {
     return Object.assign(document.createElement(tag), options);
 }
+function toggleClass(classname) {
+    this.className.includes(classname)
+        ? this.classList.remove(classname)
+        : this.classList.add(classname);
+}
+function toggleLoading() {
+    var app = document.getElementById('app');
+    var spinner = document.getElementById('spinner');
+    toggleClass.call(app, 'd-none');
+    toggleClass.call(spinner, 'd-none');
+}
+exports.toggleLoading = toggleLoading;
 function createCountryCard(el) {
-    var card = createNode('div', { className: 'card', style: 'max-width: 18rem;' });
-    var img = createNode('img', { src: el.querySelector('img').src, className: 'card-img-top' });
+    var card = createNode('div', { className: 'card' });
+    var img = createNode('img', { className: 'card-img-top' });
     var cardBody = createNode('div', { className: 'card-body' });
     [
-        { tag: 'h5', options: { innerHTML: el.querySelector('h3').innerHTML, style: 'height: 48px' } },
-        { tag: 'p', options: { innerHTML: '', className: 'card-text', } },
-        { tag: 'p', options: { innerHTML: el.querySelectorAll('.icon-star-1.active').length + ' stars' } },
+        { tag: 'h5', options: { innerHTML: el.name } },
+        { tag: 'p', options: { innerHTML: el.city + " in " + el.country, className: 'card-text', } },
+        { tag: 'p', options: { innerHTML: el.stars + ' stars' } },
         { tag: 'a', options: { href: '#', className: 'btn btn-primary', innerHTML: 'More information' } }
     ].forEach(function (el) {
         cardBody.appendChild(createNode(el.tag, el.options));
@@ -158,39 +177,93 @@ function createCountryCard(el) {
     return card;
 }
 function createUniversityGroup(univers) {
-    var groups = [];
-    var groupSize = 6;
-    var cardGroupClass = 'card-deck';
+    // let groups = [];
+    // let groupSize = 6;
+    var cardGroupClass = 'card-columns';
     universitiesNode.innerHTML = '';
-    for (var i = 0; i < univers.length; i += groupSize) {
-        groups.push(univers.slice(i, i + groupSize));
-    }
-    groups.forEach(function (univerNodesGroup) {
-        var cardGroupNode = createNode('div', { className: cardGroupClass, style: 'margin-top: 30px' });
-        univerNodesGroup.forEach(function (univerNode) {
-            cardGroupNode.appendChild(createCountryCard(univerNode));
-        });
-        universitiesNode.append(cardGroupNode);
+    // for(let i = 0; i < univers.length; i+=groupSize ) {
+    //     groups.push(univers.slice(i, i+groupSize));
+    // }
+    var cardGroupNode = createNode('div', { className: cardGroupClass, style: 'margin-top: 30px' });
+    univers.forEach(function (univerNode) {
+        // univerNodesGroup.forEach(univerNode=> {
+        // cardGroupNode.appendChild(createCountryCard(univerNode));
+        // });
+        cardGroupNode.appendChild(createCountryCard(univerNode));
     });
+    universitiesNode.appendChild(cardGroupNode);
 }
-function handleCountryClick(e) {
-    e.preventDefault();
-    var countryfilter = this.getAttribute('data-js-country');
-    var univers = [];
-    createUniversityGroup(univers);
-}
-function createCountyList(countries) {
-    countries.forEach(function (val) {
+exports.createUniversityGroup = createUniversityGroup;
+function createList(arr, FilterProxy, propName, nodeId) {
+    var handler = function (e) {
+        e.preventDefault();
+        var filter = this.getAttribute('data-js');
+        toggleClass.call(this, 'active');
+        FilterProxy[propName] = filter; //starts rebuilding
+    };
+    arr.forEach(function (val) {
         var node = createNode('li', {
             className: 'list-group-item list-group-item-action',
             innerHTML: val,
-            onclick: handleCountryClick,
+            onclick: handler,
         });
-        node.setAttribute('data-js-country', val);
-        document.getElementById('countries').appendChild(node);
+        node.setAttribute('data-js', val);
+        document.getElementById(nodeId).appendChild(node);
     });
 }
-exports.createCountyList = createCountyList;
+exports.createList = createList;
+
+
+/***/ }),
+
+/***/ 398:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var createDom_1 = __webpack_require__(350);
+var Filter = {
+    countries: new Set(),
+    spec: new Set(),
+    items: [],
+    filter: function () {
+        var countryFilter = function (u) { return !Filter.countries.size || Filter.countries.has(u.country); };
+        var specFilter = function (u) { return (!Filter.spec.size || u.detail.speciality && u.detail.speciality.length)
+            && u.detail.speciality.filter(function (a) { return Filter.spec.has(a); }).length; };
+        if (!!Filter.countries.size || !!Filter.spec.size) {
+            return Filter.items.filter(function (u) { return countryFilter(u) && specFilter(u); });
+        }
+        else {
+            return Filter.items; //if filters not seted
+        }
+    },
+    clearFilters: function () {
+        for (var prop in Filter) {
+            if (Filter[prop] instanceof Set) {
+                Filter[prop].empty();
+            }
+        }
+    },
+};
+var FilterProxy = new Proxy(Filter, {
+    set: function (target, prop, value) {
+        if (prop in target) {
+            if (target[prop] instanceof Set) { // filter properties
+                target[prop].has(value) ? target[prop].delete(value) : target[prop].add(value);
+                createDom_1.createUniversityGroup(target.filter());
+            }
+            else { // items
+                target[prop] = value;
+            }
+            return true;
+        }
+        else {
+            throw new Error("There is no prop " + String(prop) + " in Filter object");
+        }
+    },
+});
+exports.default = FilterProxy;
 
 
 /***/ })

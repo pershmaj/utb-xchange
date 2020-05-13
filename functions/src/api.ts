@@ -28,10 +28,10 @@ function parseUniversities(uniDom: string) {
       const detail: IUniversityDetail = await getUniversity(link);
       const stars = $(".icon-star-1.active", item);
       const inst: IUniversity = {
-        name: check($("h3").text()),
+        name: check($("h3", item).text()),
         stars: stars && stars.length ? stars.length : 1,
         country: check($(".country-name", item).text()),
-        city: check($("h4").text()),
+        city: check($("h4", item).text()),
         detail: detail,
       };
       parsedUni.push(inst);

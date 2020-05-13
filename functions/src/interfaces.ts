@@ -17,5 +17,5 @@ export interface IUniversityDetail {
     link: string
     // photoLinks: string[],
     // information: string,
-    speciality: string,
+    speciality: string[],
 }
